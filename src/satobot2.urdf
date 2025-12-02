@@ -78,7 +78,7 @@
     <joint name="livox_lidar_joint" type="fixed">
         <parent link="base_link" />
         <child link="livox_frame" />
-        <origin xyz="-0.119 0.0 0.390" rpy="0 0 0" />
+        <origin xyz="-0.119 0.0 0.415" rpy="0 0 0" />
     </joint>
 
     <!-- IMU の定義 -->
