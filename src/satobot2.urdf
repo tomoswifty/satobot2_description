@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot name="msd700_mk4" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:property name="wheel_diameter" value="0.185" />
+    <xacro:property name="wheel_radius" value="0.0925"/>
+    <xacro:property name="wheel_width" value="0.025"/>
+    <xacro:property name="wheel_separation" value="0.300"/>
+
+    <!-- satobot2 body の定義 -->
+    <link name="base_link">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="file://$(find satobot2_description)/mesh/008_satobot2_urdf_lightasm.dae" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="file://$(find satobot2_description)/mesh/008_satobot2_urdf_lightasm.dae" />
+                <!-- mesh/008_satobot2_urdf_lightasm.dae mesh/008_satobot2_urdf_lightasm.dae -->
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="base_footprint" />
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint" />
+        <child link="base_link" />
+        <origin xyz="0.0 0.0 0.051" rpy="0 0 0" />
+    </joint>
+
+    <!-- satobot2 駆動輪の定義 -->
+    <xacro:macro name="drive_wheel" params="prefix x_axis y_axis yaw_axis">
+        <link name="${prefix}_wheel_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${yaw_axis}" />
+                <geometry>
+                    <mesh filename="file://$(find satobot2_description)/mesh/wheel_v2.dae" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${prefix}_wheel_joint" type="continuous" >
+            <parent link="base_link" />
+            <child link="${prefix}_wheel_link" />
+            <origin xyz="${x_axis * -0.176} ${y_axis * wheel_separation / 2 } 0.040" rpy="0.0 0.0 0.0" />
+            <!-- <origin xyz="0.3005 0.066 0.287" rpy="0.0 0.0 0.0" /> -->
+            <axis xyz="0 1 0" />
+        </joint>
+    </xacro:macro>
+
+    <xacro:drive_wheel prefix="left" x_axis="1.0" y_axis="1" yaw_axis="0.0" />
+    <xacro:drive_wheel prefix="right" x_axis="1.0" y_axis="-1" yaw_axis="0.0" />
+
+    <!-- Livox MID-360 -->
+    <link name="livox_frame">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="file://$(find msd_mk4_description)/meshes/mid-360_v1.dae" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="file://$(find msd_mk4_description)/meshes/mid-360_v1.dae" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="livox_lidar_joint" type="fixed">
+        <parent link="base_link" />
+        <child link="livox_frame" />
+        <origin xyz="-0.119 0.0 0.390" rpy="0 0 0" />
+    </joint>
+
+    <!-- IMU の定義 -->
+    <link name="livox_imu_link" />
+
+    <joint name="imu_joint" type="fixed">
+        <parent link="livox_frame" />
+        <child link="livox_imu_link" />
+        <origin xyz="0 0 0.0" rpy="0 0 0" />
+    </joint>
+
+    <!-- RealSense D457 -->
+    <link name="realsense_link">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="file://$(find satobot2_description)/mesh/RealSenseD457.dae" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="file://$(find satobot2_description)/mesh/RealSenseD457.dae" />
+                <!-- mesh/RealSenseD457.dae -->
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="realsense_joint" type="fixed">
+        <parent link="base_link" />
+        <child link="realsense_link" />
+        <origin xyz="0.232 -0.0007 0.075" rpy="0 0 0" />
+    </joint>
+
+</robot>
