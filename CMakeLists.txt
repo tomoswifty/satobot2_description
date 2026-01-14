@@ -4,7 +4,6 @@ project(satobot2_description)
 find_package(ament_cmake REQUIRED)
 
 install(DIRECTORY
-  config
   launch
   rviz
   src
